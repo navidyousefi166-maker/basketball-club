@@ -1,0 +1,37 @@
+<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>باشگاه بسکتبال</title><style>
+*{box-sizing:border-box}body{margin:0;background:#141715;color:#faf5e8;font:16px/1.7 Tahoma,Arial,sans-serif}main{max-width:580px;margin:auto;padding:18px}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #464a41;padding-bottom:12px}h1,h2,p{margin:0}h1{font-size:22px}h2{font-size:18px}header b{font:bold 22px monospace;color:#edaa67}section{margin:16px 0}.card{background:linear-gradient(115deg,#e7a270,#f4c599);color:#261e1a;border-radius:18px;display:flex;align-items:center;justify-content:space-around;overflow:hidden;min-height:184px}.card h2{font-size:27px;overflow-wrap:anywhere}.card div{max-width:48%}.card canvas{width:132px;height:172px;image-rendering:pixelated}.panel{padding:16px;border:1px solid #43463c;background:#20251f;border-radius:14px}button,input,select{font:inherit;border-radius:9px;padding:9px;color:inherit;background:#30372e;border:1px solid #59604f}button{cursor:pointer}button:disabled{opacity:.55}label{display:block;margin:10px 0}select,input{width:100%}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{width:100%;background:#cbea8f;color:#21291b;font-weight:bold;margin-top:10px}.stat{display:grid;grid-template-columns:85px 1fr 46px;align-items:center;gap:10px;margin-top:6px}.bar{height:6px;border-radius:4px;background:#3d4439;overflow:hidden}.fill{height:100%;background:#b6cf8c}.note{color:#d8e5ba}small{color:#bfc4b7}nav{display:flex;gap:8px;margin-top:12px}nav button{flex:1}button[aria-pressed=true]{border-color:#cbea8f;color:#cbea8f}[hidden]{display:none!important}
+</style><main><header><h1>باشگاه بسکتبال</h1><b dir="ltr">2×2 ◉</b></header>
+<section class="card"><div><strong id="position"></strong><h2 id="title"></h2><p id="profile"></p></div><canvas width="66" height="86" aria-label="نمای پیکسلی بازیکن"></canvas></section>
+<nav><button id="playerTab">شخصیت</button><button id="gymTab">باشگاه</button></nav>
+<section id="editor" class="panel"><h2>مشخصات بازیکن</h2><label>نام بازیکن<input id="nameField" maxlength="20" placeholder="نام بازیکن"></label><label>پست<select id="role"></select></label><div class="row"><label>رنگ پوست<select id="skin"><option>روشن</option><option>گندمی</option><option>سبزه</option><option>تیره</option></select></label><label>فرم صورت<select id="face"><option>کشیده</option><option>گرد</option><option>چهارگوش</option></select></label></div><button class="primary" id="confirm">ساخت بازیکن و ورود به باشگاه</button></section>
+<section id="gym" class="panel" hidden><h2>تمرین امروز</h2><label>انتخاب تمرین<select id="training"></select></label><p class="note" id="effect"></p><button id="train" class="primary">انجام تمرین</button><p role="status" id="status"></p></section>
+<section class="panel"><h2>توانایی‌ها <small>/ ۱۰۰</small></h2><div id="stats"></div></section><p id="warning" role="status"></p></main>
+<script>
+const el=id=>document.getElementById(id);
+const roles=[['پوینت گارد',185,[45,10,50,20,30]],['شوتینگ گارد',193,[50,20,42,24,35]],['اسمال فوروارد',200,[38,35,36,32,40]],['پاور فوروارد',206,[25,45,25,45,38]],['سنتر',212,[18,50,20,50,32]]];
+const skills=['شوت','دانک','سرعت','قدرت بدنی','پرش'];
+const sessions=['شوت آزاد','تمرین دانک','تردمیل','پرس سینه','پرش روی جعبه'];
+const num=n=>n.toLocaleString('fa-IR');const today=()=>new Date().toLocaleDateString('en-CA');
+let p={name:'',role:0,skin:1,face:0,created:false,gains:[0,0,0,0,0],day:'',last:0};
+try{const saved=JSON.parse(localStorage.getItem('basketball.club.v1'));if(saved)Object.assign(p,saved)}catch{}
+function save(){try{localStorage.setItem('basketball.club.v1',JSON.stringify(p))}catch{el('warning').textContent='این مرورگر اجازهٔ ذخیره نمی‌دهد. پیشرفت فقط تا زمان بستن صفحه حفظ می‌شود.'}}
+function populate(id,items){items.forEach(t=>el(id).add(new Option(t)))}
+populate('role',roles.map(r=>r[0]));populate('training',sessions);
+el('nameField').value=p.name;['role','skin','face'].forEach(k=>el(k).selectedIndex=p[k]);
+function portrait(){const c=document.querySelector('canvas').getContext('2d');c.clearRect(0,0,66,86);
+const block=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h)};
+const skin=['#ffd2a7','#d99b71','#a76b50','#704535'][p.skin],ink='#282528',jersey='#344639',light='#e2edbd';let w=[16,20,22][p.face],x=33-w/2;
+block(7,82,53,2,'#bd8968');block(23,61,8,18,skin);block(36,61,8,18,skin);block(19,77,13,6,ink);block(35,77,13,6,ink);
+block(12,31,10,22,skin);block(45,31,10,22,skin);block(11,49,8,9,skin);block(48,49,8,9,skin);block(22,26,23,24,jersey);block(18,29,6,21,jersey);block(43,29,6,21,jersey);block(20,49,27,12,ink);block(20,59,11,5,ink);block(36,59,11,5,ink);block(29,23,8,8,skin);block(x,9,w,14,skin);block(x+2,22,w-4,3,skin);block(x-1,6,w+2,6,ink);block(x+2,4,w-3,3,ink);block(x,11,3,4,ink);block(x+4,15,2,2,ink);block(x+w-6,15,2,2,ink);block(30,21,6,1,'#754936');block(27,36,3,9,light);block(34,36,6,2,light);block(38,38,2,7,light);
+c.beginPath();c.arc(12,55,9,0,Math.PI*2);c.fillStyle='#cb642d';c.fill();block(4,54,16,1,ink);block(11,47,1,16,ink)}
+function render(){const [pos,h,base]=roles[p.role];el('position').textContent=pos;el('title').textContent=p.name||'بازیکن من';el('profile').textContent='۱۷ ساله · '+num(h)+' سانتی‌متر';portrait();el('stats').replaceChildren();
+skills.forEach((s,i)=>{const v=Math.min(100,base[i]+p.gains[i]);const d=document.createElement('div');d.className='stat';d.innerHTML='<span>'+s+'</span><div class="bar"><div class="fill" style="width:'+v+'%"></div></div><b>'+num(v)+'</b>';el('stats').append(d)});
+el('role').disabled=p.created;el('confirm').textContent=p.created?'ورود به باشگاه':'ساخت بازیکن و ورود به باشگاه';el('gymTab').disabled=!p.created;
+const i=el('training').selectedIndex;const spent=p.day===today();el('train').disabled=spent||base[i]+p.gains[i]>=100;el('effect').textContent=skills[i]+' · تا ۰٫۲ واحد افزایش';el('status').textContent=spent?'تمرین امروز ثبت شد · '+sessions[p.last]+' · تمرین بعدی فردا':'هر روز یک تمرین انتخاب کن.'}
+function tab(gym){el('editor').hidden=gym;el('gym').hidden=!gym;el('playerTab').setAttribute('aria-pressed',!gym);el('gymTab').setAttribute('aria-pressed',gym);render()}
+el('nameField').oninput=e=>{p.name=e.target.value.trim();save();render()};
+['role','skin','face'].forEach(k=>el(k).onchange=e=>{p[k]=e.target.selectedIndex;save();render()});
+el('confirm').onclick=()=>{p.created=true;save();tab(true)};el('gymTab').onclick=()=>tab(true);el('playerTab').onclick=()=>tab(false);
+el('training').onchange=render;el('train').onclick=()=>{if(!p.created||p.day===today())return;const i=el('training').selectedIndex;p.gains[i]=Math.round((p.gains[i]+.2)*10)/10;p.day=today();p.last=i;save();render()};
+window.addEventListener('focus',render);setInterval(render,60000);tab(p.created);
+</script></html>
